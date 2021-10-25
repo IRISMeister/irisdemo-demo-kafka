@@ -24,6 +24,7 @@ XData ProductionDefinition
   </Item>
   <Item Name="Core Banking Kafka Events" Category="" ClassName="Kafka.Service.KeyLessAvroService" PoolSize="1" Enabled="true" Foreground="false" Comment="" LogTraceEvents="false" Schedule="">
     <Setting Target="Adapter" Name="%gatewayPort">55555</Setting>
+    <Setting Target="Adapter" Name="%gatewayHost">localhost</Setting>
     <Setting Target="Adapter" Name="AutoOffsetResetConfig">earliest</Setting>
     <Setting Target="Adapter" Name="KafkaBrokerURL">http://broker:9092</Setting> 
     <Setting Target="Adapter" Name="SchemaRegistryConfig">corebanking</Setting>

@@ -1,4 +1,4 @@
-FROM intersystemsdc/irisdemo-base-irisint-community:version-1.9.0
+FROM intersystemsdc/irisdemo-base-irisint-community:version-1.9.6
 
 # IRIS Global buffers and Routine Buffers
 ENV IRIS_GLOBAL_BUFFERS=1024
