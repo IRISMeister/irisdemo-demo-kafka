@@ -1,38 +1,16 @@
 
 docker hubのイメージが2020.3AAのままなので、2021.1に上げるために、ローカルでビルドする。
 
-1. ベースイメージのバージョンを上げる
-docker pull https://github.com/intersystems-community/irisdemo-base-irisint-community.git
+1. ベースイメージのIRISバージョンを上げる
+git clone https://github.com/IRISMeister/irisdemo-base-irisint-community.git
 cd irisdemo-base-irisint-community
 ./build.sh
 
-2. デモ用イメージをbuild
-cd ../irisdemo-demo-kafka/image-iris-datasource/
-Dockerfile修正
->FROM intersystemsdc/irisdemo-base-irisint-community:version-1.9.0
->FROM intersystemsdc/irisdemo-base-irisint-community:version-1.9.6
-
-3. marvenコンテナイメージを更新
-cd ../irisdemo-base-mavenc/
+2. marvenコンテナイメージを更新
+git clone https://github.com/intersystems-community/irisdemo-base-mavenc.git
+cd irisdemo-base-mavenc
 ./build.sh
 
-
-4. 全体をbuild
-image-iris-datasource/kafka-pex-adapter/build.sh
->        --name $COMPILER_CONTAINER intersystemsdc/irisdemo-base-mavenc:version-1.5.0
->        --name $COMPILER_CONTAINER intersystemsdc/irisdemo-base-mavenc:version-1.4.1
-
-buildtools.sh
->			--name $compilerContainer intersystemsdc/irisdemo-base-mavenc:version-1.5.0
->			--name $compilerContainer intersystemsdc/irisdemo-base-mavenc:version-1.4.1
-
-image-iris-datasource/src/IRISDemo/Production.cls
-追加
-  <Item Name="Core Banking Kafka Events" Category="" ClassName="Kafka.Service.KeyLessAvroService" PoolSize="1" Enabled="true" Foreground="false" Comment="" LogTraceEvents="false" Schedule="">
->    <Setting Target="Adapter" Name="%gatewayHost">localhost</Setting>
-
-これが無いと、理解しづらいエラーになる。
-Terminating Job 602 / 'Core Banking Kafka Events'
-with Status = ERROR #5809: Object to Load not found, class 'Config.Gateways', ID 'IRIS||Gateways||55555', %QuitTask=
-
+3. デモ用イメージをbuild
+git clone https://github.com/IRISMeister/irisdemo-demo-kafka.git
 ./build.sh
