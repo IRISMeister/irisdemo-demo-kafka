@@ -14,3 +14,6 @@ cd irisdemo-base-mavenc
 3. デモ用イメージのIRISバージョンを上げる
 git clone https://github.com/IRISMeister/irisdemo-demo-kafka.git
 ./build.sh
+
+4. デモを実行する
+docker-compose up
