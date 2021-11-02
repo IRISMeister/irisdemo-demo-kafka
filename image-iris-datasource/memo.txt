@@ -31,7 +31,7 @@ image-iris-datasource/src/IRISDemo/Production.cls
   <Item Name="Core Banking Kafka Events" Category="" ClassName="Kafka.Service.KeyLessAvroService" PoolSize="1" Enabled="true" Foreground="false" Comment="" LogTraceEvents="false" Schedule="">
 >    <Setting Target="Adapter" Name="%gatewayHost">localhost</Setting>
 
-これが無いと、意味不明なエラーになる。
+これが無いと、理解しづらいエラーになる。
 Terminating Job 602 / 'Core Banking Kafka Events'
 with Status = ERROR #5809: Object to Load not found, class 'Config.Gateways', ID 'IRIS||Gateways||55555', %QuitTask=
 
