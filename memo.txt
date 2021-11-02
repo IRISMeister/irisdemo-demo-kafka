@@ -1,0 +1,16 @@
+
+docker hubのイメージが2020.3AAのままなので、2021.1に上げるために、ローカルでビルドする。
+
+1. ベースイメージのIRISバージョンを上げる
+git clone https://github.com/IRISMeister/irisdemo-base-irisint-community.git
+cd irisdemo-base-irisint-community
+./build.sh
+
+2. marvenコンテナイメージを更新
+git clone https://github.com/intersystems-community/irisdemo-base-mavenc.git
+cd irisdemo-base-mavenc
+./build.sh
+
+3. デモ用イメージをbuild
+git clone https://github.com/IRISMeister/irisdemo-demo-kafka.git
+./build.sh
