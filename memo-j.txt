@@ -17,3 +17,76 @@ git clone https://github.com/IRISMeister/irisdemo-demo-kafka.git
 
 4. デモを実行する
 docker-compose up
+
+5. UIを開く
+http://irishost:10001/csp/appint/demo.csp
+
+----
+
+ヒント
+https://bufferings.hatenablog.com/entry/2017/06/06/003923
+
+Flowの理解
+
+Core Banking Kafka Events(Kafka.Service.KeyLessAvroService.cls)
+- Kafka.Adapter.KeyLessAvroInboundAdapter PEXアダプタでデータを受信する
+irisdemo.kafka.KeyLessAvroInboundAdapter.java
+org.apache.avro.generic.GenericRecordで受け取ったレコードをProcessInput()に渡す
+
+    この辺りが送信時にエンコードされたデータを受信側(pex adaptor)で、デコードする仕組みを設定している箇所。
+    KEYにはプロダクション設定で初期値ByteArrayDeserializerが設定されている。
+    VALUEはKafkaAvroDeserializer固定。これは何？
+    https://docs.confluent.io/platform/current/schema-registry/serdes-develop/index.html#supported-formats
+
+		try {
+			props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,
+					Class.forName(KEY_DESERIALIZER_CLASS_CONFIG).getName());
+		} catch (ClassNotFoundException e) {
+			this.LOGERROR("Invalid KEY deserializer class: " + KEY_DESERIALIZER_CLASS_CONFIG);
+			throw e;
+		}
+
+		props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
+				"io.confluent.kafka.serializers.KafkaAvroDeserializer");
+		props.put("schema.registry.url", SCHEMA_REGISTRY);
+		props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, AUTO_OFFSET_RESET_CONFIG);
+
+
+    GenericRecord data;
+
+				String className = getClassNameForSchema(data.getSchema());
+
+				list.add(partition);
+				list.add(offset);
+				list.add(className);
+				list.add(data.toString());
+				BusinessHost.ProcessInput(list);
+                
+- データはKafka.Service.KeyLessAvroService.OnProcessInput()に渡る
+        Set tPartition = $ListGet(pInput, 1)
+        Set tOffSet = $ListGet(pInput, 2)
+        Set tClassName = $ListGet(pInput, 3)
+        Set tJSON = $ListGet(pInput, 4)
+つまり、Javaのdata.toString()はJSON文字列ということ。(バイナリではなかった...?)
+
+
+
+0
+59199
+corebanking.com.irisdemo.banksim.avroevent.NewCustomerAvroEvent
+{"eventId": 59200, "eventDate": "2019-12-23T00:13:33.424", "customerId": 112629, "name": "Oswald Brooks", "accountNumber": "0006000", "initialAmount": 57064.3359375, "address": {"state": "IA", "city": "San Fransokyo", "phone": "5866996266"}}
+
+
+
+
+
+
+Core Banking Normalization Service
+- 0.1秒ごとに、下記で取得できるテーブル名をSELECTする
+
+APPINT>w ##class(SchemaRegistry.Config).NameIndexOpen("corebanking",,.tSC).GetDataSourceTableName()
+corebanking.AllObjects
+
+select %ID from corebanking.AllObjects where %ProcessingStatus = 'PEND'
+
+- 該当するレコードをOpenId()し、BPに送信する。
